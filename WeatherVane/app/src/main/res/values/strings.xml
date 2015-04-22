@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Earthquakes</string>
+    <string name="action_settings">Settings</string>
+    
+    <string name="detail_label_location">Location</string>
+    <string name="detail_no_location">Select an Earthquake</string>
+
+</resources>
