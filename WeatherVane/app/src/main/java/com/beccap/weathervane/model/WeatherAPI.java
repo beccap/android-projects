@@ -39,4 +39,5 @@ public class WeatherAPI {
 
 	// field within "weather" array (within weather status) - only read first entry in weather array
 	public static final String WEATHER_DESCRIPTION_TOKEN = "description";
+	public static final String WEATHER_ICON_TOKEN        = "icon";
 }

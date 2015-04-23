@@ -6,7 +6,12 @@
 
 package com.beccap.weathervane.model;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
+
+import com.beccap.weathervane.MainActivity;
 
 import java.io.Serializable;
 
@@ -32,6 +37,8 @@ public class WeatherStatus implements Serializable
 	private double _windSpeed;
 	private double _windDirection;
 	private String _weatherDescription;
+	private String _weatherIcon;
+
 	private String _formattedDateTime;
 
 	private static final String DEGREE = "\u00b0";
@@ -59,6 +66,7 @@ public class WeatherStatus implements Serializable
 		_windDirection = wind.getDouble(WeatherAPI.WIND_DIRECTION_TOKEN);
 
 		_weatherDescription = weather.getString(WeatherAPI.WEATHER_DESCRIPTION_TOKEN);
+		_weatherIcon        = weather.getString(WeatherAPI.WEATHER_ICON_TOKEN);
 
 		// create a formatted date-time string by converting ms since epoch to Date
 		// (NOTE: _dateTime given in seconds; must convert to millis)
@@ -91,6 +99,7 @@ public class WeatherStatus implements Serializable
 		json.put(WeatherAPI.WEATHER_WIND_TOKEN, wind);
 
 		weather.put(WeatherAPI.WEATHER_DESCRIPTION_TOKEN, _weatherDescription);
+		weather.put(WeatherAPI.WEATHER_ICON_TOKEN, _weatherIcon);
 		weatherArray.put(0,weather);
 		json.put(WeatherAPI.WEATHER_WEATHER_TOKEN, weatherArray);
 
@@ -182,6 +191,15 @@ public class WeatherStatus implements Serializable
 		return Integer.toString((int)(_windDirection + .5)) + DEGREE + " (" + desc + ")";
 	}
 
+	public Uri getWeatherIconUri() {
+
+		// get path to drawable
+		String path = "android.resource://" + MainActivity.PACKAGE_NAME + "/drawable/icon" + _weatherIcon + ".png";
+		Log.d(TAG, "path to icon: " + path);
+
+		return Uri.parse(path);
+	}
+
 	// description (for debugging)
 	public String toString() {
 		String result = "City Name: " + _cityName + "\n" +
@@ -190,7 +208,7 @@ public class WeatherStatus implements Serializable
 				        "Current Temp: " + getTemperatureString() + "\n" +
 				        "Pressure: " + getPressureString() + "; Humidity: " + getHumidityString() + "\n" +
 						"Wind Speed: " + getWindSpeedString() + "; Wind Direction: " + getWindDirectionString() + "\n" +
-						"Description: " + getWeatherDescription();
+						"Description: " + getWeatherDescription() + "; Icon: " + _weatherIcon;
 		return result;
 	}
 }

@@ -16,6 +16,8 @@ import com.beccap.weathervane.model.WeatherStatus;
 public class MainActivity extends ActionBarActivity implements WeatherListFragment.OnWeatherStatusSelectedListener {
 	
 	private static final String TAG = MainActivity.class.toString();
+
+	public static String PACKAGE_NAME;
 	
 	private boolean _isTwoPane;
 
@@ -25,6 +27,8 @@ public class MainActivity extends ActionBarActivity implements WeatherListFragme
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		PACKAGE_NAME = getApplicationContext().getPackageName();
 		
 		FragmentManager fm = getSupportFragmentManager();
 		WeatherListFragment listFragment = (WeatherListFragment)fm.findFragmentById(R.id.fragment_container);
