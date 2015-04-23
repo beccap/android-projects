@@ -47,6 +47,7 @@ public class WeatherLoader implements SimpleJSONReader.Listener
 							WeatherAPI.WEATHER_URL_GET_LAT + lat +
 							WeatherAPI.WEATHER_URL_GET_LON + lon +
 							WeatherAPI.WEATHER_URL_GET_COUNT + count;
+		Log.d(TAG, "URL: " + weatherURL);
 		new SimpleJSONReader(this, weatherURL).execute();
 	}
 

@@ -8,16 +8,17 @@ package com.beccap.weathervane.model;
 
 public class WeatherAPI {
 	// URL and arguments
-	public static final String WEATHER_URL = "http://api.openweathermap.org/data/2.5/find";
-	public static final String WEATHER_URL_GET_LAT   = "?lat:";
-	public static final String WEATHER_URL_GET_LON   = "&lon:";
-	public static final String WEATHER_URL_GET_COUNT = "&cnt";
+	public static final String WEATHER_URL = "http://api.openweathermap.org/data/2.5/find?units=imperial";
+	public static final String WEATHER_URL_GET_LAT   = "&lat=";
+	public static final String WEATHER_URL_GET_LON   = "&lon=";
+	public static final String WEATHER_URL_GET_COUNT = "&cnt=";
 
 	// primary weather list token
 	public static final String WEATHER_ARRAY_TOKEN       = "list";
 
 	// fields and objects within individual weather status record
 	public static final String WEATHER_CITY_NAME_TOKEN   = "name";
+	public static final String WEATHER_DATE_TIME_TOKEN   = "dt";
 	public static final String WEATHER_COORD_TOKEN       = "coord";
 	public static final String WEATHER_MAIN_TOKEN        = "main";
 	public static final String WEATHER_WIND_TOKEN        = "wind";
@@ -29,8 +30,6 @@ public class WeatherAPI {
 
 	// fields within "main" object
 	public static final String MAIN_TEMP_TOKEN           = "temp";
-	public static final String MAIN_MIN_TEMP_TOKEN       = "temp_min";
-	public static final String MAIN_MAX_TEMP_TOKEN       = "temp_max";
 	public static final String MAIN_PRESSURE_TOKEN       = "pressure";
 	public static final String MAIN_HUMIDITY_TOKEN       = "humidity";
 
