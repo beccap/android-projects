@@ -43,8 +43,8 @@ public class WeatherListFragment extends ListFragment implements WeatherLoader.L
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true); // ensures we don't have to reload the json upon rotation
 		
-		Log.d(TAG, "in onCreate");
-//		new WeatherLoader(this).startLoading(location);
+		Log.d(TAG, "in onCreate, loading weather");
+		new WeatherLoader(this).startLoading(45.715406, -122.872803, 10);
 	}
 	
 	@Override
@@ -61,7 +61,8 @@ public class WeatherListFragment extends ListFragment implements WeatherLoader.L
 			throw new ClassCastException(activity.toString() + " missing required implementation of OnWeatherStatusSelectedListener");
 		}
 	}
-	
+
+	// ListAdapter callbacks
 	@Override
 	public void onListItemClick(ListView listView, View view, int pos, long id)
 	{
@@ -75,7 +76,7 @@ public class WeatherListFragment extends ListFragment implements WeatherLoader.L
 	// WeatherLoader.Listener callback
 	public void onWeatherLoaded(ArrayList<WeatherStatus> weatherList)
 	{
-//		testWeatherList(weatherList);
+		testWeatherList(weatherList);
 		if (weatherList == null) {
 			Log.e(TAG, "null Weather List passed to onWeatherLoaded");
 			return;
@@ -83,7 +84,8 @@ public class WeatherListFragment extends ListFragment implements WeatherLoader.L
 		WeatherListAdapter adapter = new WeatherListAdapter(weatherList);
 		setListAdapter(adapter);
 	}
-    
+
+	// Getter for currently selected item
     public WeatherStatus getSelectedWeatherStatus()
     {
     	return _selectedWeatherStatus;
@@ -105,15 +107,15 @@ public class WeatherListFragment extends ListFragment implements WeatherLoader.L
 	}
 	
 	// Debugging
-//	private void testWeatherList(ArrayList<WeatherStatus> weatherList)
-//	{
-//		if (weatherList == null) {
-//			Log.e(TAG, "null WeatherList passed to testWeatherList");
-//			return;
-//		}
-//		Log.d(TAG,"WeatherList (size = " + weatherList.size() + "):\n");
-//		for (int i = 0; i < weatherList.size(); ++i) {
-//			Log.d(TAG, weatherList.get(i).toString() + "\n");
-//		}
-//	}
+	private void testWeatherList(ArrayList<WeatherStatus> weatherList)
+	{
+		if (weatherList == null) {
+			Log.e(TAG, "null WeatherList passed to testWeatherList");
+			return;
+		}
+		Log.d(TAG,"WeatherList (size = " + weatherList.size() + "):\n");
+		for (int i = 0; i < weatherList.size(); ++i) {
+			Log.d(TAG, weatherList.get(i).toString() + "\n");
+		}
+	}
 }

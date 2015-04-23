@@ -21,7 +21,6 @@ import org.json.JSONTokener;
 import android.location.Location;
 import android.util.Log;
 
-import com.beccap.weathervane.Configuration;
 import com.beccap.weathervane.util.SimpleJSONReader;
 
 public class WeatherLoader implements SimpleJSONReader.Listener
@@ -42,11 +41,12 @@ public class WeatherLoader implements SimpleJSONReader.Listener
 
 	// call this to start reading the JSON; will conclude by loading the Array with values
 	// parsed from the JSON string.
-	public void startLoading(Location location) {
+	public void startLoading(double lat, double lon, int count) {
 
-		String weatherURL = Configuration.WEATHER_URL + "?lat=" + location.getLatitude() +
-				                                        "?lon=" + location.getLongitude() +
-														"?cnt=" + Configuration.NUM_ENTRIES;
+		String weatherURL = WeatherAPI.WEATHER_URL +
+							WeatherAPI.WEATHER_URL_GET_LAT + lat +
+							WeatherAPI.WEATHER_URL_GET_LON + lon +
+							WeatherAPI.WEATHER_URL_GET_COUNT + count;
 		new SimpleJSONReader(this, weatherURL).execute();
 	}
 
@@ -64,7 +64,7 @@ public class WeatherLoader implements SimpleJSONReader.Listener
 		try {
 			weatherStatusList = new ArrayList<WeatherStatus>();
 			JSONObject tokenerResult = (JSONObject)new JSONTokener(jsonString).nextValue();
-			JSONArray  jsonArray = tokenerResult.getJSONArray(Configuration.WEATHER_ARRAY_TOKEN);
+			JSONArray  jsonArray = tokenerResult.getJSONArray(WeatherAPI.WEATHER_ARRAY_TOKEN);
 			for (int i = 0; i < jsonArray.length(); ++i) {
 				// WeatherStatus knows how to parse its JSON object
 				weatherStatusList.add(new WeatherStatus(jsonArray.getJSONObject(i)));
