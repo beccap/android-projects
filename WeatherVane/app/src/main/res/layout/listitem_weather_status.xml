@@ -2,6 +2,31 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
-    
+
+    <TextView android:id="@+id/cityTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:textSize="20dp"
+        android:padding="5dp"
+        />
+
+    <ImageView android:id="@+id/weatherIconView"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:padding="5dp"
+        />
+
+    <TextView android:id="@+id/temperatureTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/weatherIconView"
+        android:layout_centerVertical="true"
+        android:textSize="20dp"
+        android:padding="5dp"
+        />
 
 </RelativeLayout>

@@ -4,25 +4,26 @@
 
 package com.beccap.weathervane;
 
-import com.beccap.weathervane.model.WeatherLoader;
-
-import java.util.ArrayList;
-
 import android.app.Activity;
-//import android.graphics.Color;
-//import android.graphics.Typeface;
-import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.provider.MediaStore.Images.Media;
 
 import com.beccap.weathervane.model.WeatherLoader;
 import com.beccap.weathervane.model.WeatherStatus;
+
+import java.util.ArrayList;
+
+//import android.graphics.Color;
+//import android.graphics.Typeface;
 
 public class WeatherListFragment extends ListFragment implements WeatherLoader.Listener {
 	
@@ -34,7 +35,6 @@ public class WeatherListFragment extends ListFragment implements WeatherLoader.L
 	
 	private OnWeatherStatusSelectedListener _onSelectedListener;
 	private WeatherStatus                   _selectedWeatherStatus = null;
-    private int                             _currentPos = -1;
 
 	// Life Cycle
 	@Override
@@ -69,7 +69,6 @@ public class WeatherListFragment extends ListFragment implements WeatherLoader.L
 		WeatherStatus weatherStatus = (WeatherStatus)getListAdapter().getItem(pos);
 		_selectedWeatherStatus = weatherStatus;
 		_onSelectedListener.onWeatherStatusSelected(weatherStatus);
-        _currentPos = pos;
         ((WeatherListAdapter)getListAdapter()).notifyDataSetChanged();
     }
 	
@@ -98,11 +97,49 @@ public class WeatherListFragment extends ListFragment implements WeatherLoader.L
 		{
 			super(getActivity(), 0, weatherList);
 		}
-		
+
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent)
 		{
-			return convertView;
+			View newView = convertView;
+			ViewHolder holder;
+
+			WeatherStatus curr = getItem(position);
+
+			// create list-item-view layout and retain views in holder
+			if (convertView == null) {
+				newView = getActivity().getLayoutInflater()
+						.inflate(R.layout.listitem_weather_status, parent, false);
+				holder = new ViewHolder();
+				holder.cityNameTextView    = (TextView)newView.findViewById(R.id.cityTextView);
+				holder.temperatureTextView = (TextView)newView.findViewById(R.id.temperatureTextView);
+				holder.weatherIconView     = (ImageView)newView.findViewById(R.id.weatherIconView);
+				newView.setTag(holder);
+
+			}
+			else {
+				holder = (ViewHolder) newView.getTag();
+			}
+
+			// update views here
+			holder.cityNameTextView.setText(curr.getCityName());
+			holder.temperatureTextView.setText(curr.getTemperatureString());
+			Uri imageUri = curr.getWeatherIconUri();
+			try {
+				holder.weatherIconView.setImageBitmap(Media.getBitmap(getActivity().getContentResolver(), imageUri));
+			}
+			catch (Exception e) {
+				Log.e(TAG, "Error reading bitmap: " + e.getMessage());
+			}
+
+			return newView;
+		}
+
+		private class ViewHolder {
+
+			TextView  cityNameTextView;
+			TextView  temperatureTextView;
+			ImageView weatherIconView;
 		}
 	}
 	

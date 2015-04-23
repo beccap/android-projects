@@ -6,19 +6,16 @@
 
 package com.beccap.weathervane.model;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
 import com.beccap.weathervane.MainActivity;
 
-import java.io.Serializable;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -69,7 +66,7 @@ public class WeatherStatus implements Serializable
 		_weatherIcon        = weather.getString(WeatherAPI.WEATHER_ICON_TOKEN);
 
 		// create a formatted date-time string by converting ms since epoch to Date
-		// (NOTE: _dateTime given in seconds; must convert to millis)
+		// (NOTE: _dateTime given in seconds; must convert to millis first)
 		_formattedDateTime = _dateFormatter.format(new Date(_dateTime * 1000L));
 	}
 
@@ -160,7 +157,7 @@ public class WeatherStatus implements Serializable
 	}
 
 	public String getTemperatureString() {
-		return Double.toString(_currentTemp) + DEGREE + " F";
+		return Integer.toString((int)(_currentTemp + .5)) + DEGREE + " F";
 	}
 
 	public String getWindSpeedString() {
@@ -194,7 +191,7 @@ public class WeatherStatus implements Serializable
 	public Uri getWeatherIconUri() {
 
 		// get path to drawable
-		String path = "android.resource://" + MainActivity.PACKAGE_NAME + "/drawable/icon" + _weatherIcon + ".png";
+		String path = "android.resource://" + MainActivity.PACKAGE_NAME + "/drawable/icon" + _weatherIcon;
 		Log.d(TAG, "path to icon: " + path);
 
 		return Uri.parse(path);
