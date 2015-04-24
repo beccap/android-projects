@@ -1,7 +1,5 @@
 package com.beccap.weathervane;
 
-import org.json.JSONException;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -9,9 +7,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 
-import com.beccap.weathervane.DetailActivity;
-import com.beccap.weathervane.R;
 import com.beccap.weathervane.model.WeatherStatus;
+
+import org.json.JSONException;
 
 public class MainActivity extends ActionBarActivity implements WeatherListFragment.OnWeatherStatusSelectedListener {
 	
@@ -90,7 +88,7 @@ public class MainActivity extends ActionBarActivity implements WeatherListFragme
 				}
 			}
 			catch (JSONException e) {
-				Log.e(TAG, "Error serializing WeatherStatus: " + e.getMessage());
+				Log.e(TAG, "Error serializing WeatherStatus in onWeatherStatusSelected(): " + e.getMessage());
 			}
 		}
 	}

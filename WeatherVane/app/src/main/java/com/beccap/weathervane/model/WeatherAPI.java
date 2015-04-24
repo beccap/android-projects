@@ -8,7 +8,9 @@ package com.beccap.weathervane.model;
 
 public class WeatherAPI {
 	// URL and arguments
-	public static final String WEATHER_URL = "http://api.openweathermap.org/data/2.5/find?units=imperial";
+	public static final String WEATHER_URL           = "http://api.openweathermap.org";
+	public static final String WEATHER_API_QUERY     = "/data/2.5/find?units=imperial";
+	public static final String WEATHER_ICON_QUERY    = "/img/w/";
 	public static final String WEATHER_URL_GET_LAT   = "&lat=";
 	public static final String WEATHER_URL_GET_LON   = "&lon=";
 	public static final String WEATHER_URL_GET_COUNT = "&cnt=";

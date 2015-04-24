@@ -5,7 +5,6 @@
 package com.beccap.weathervane;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -15,17 +14,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.provider.MediaStore.Images.Media;
 
 import com.beccap.weathervane.model.WeatherLoader;
 import com.beccap.weathervane.model.WeatherStatus;
 
 import java.util.ArrayList;
 
-//import android.graphics.Color;
-//import android.graphics.Typeface;
-
-public class WeatherListFragment extends ListFragment implements WeatherLoader.Listener {
+public class WeatherListFragment extends ListFragment implements WeatherLoader.OnWeatherLoadedListener {
 	
 	private static final String TAG = WeatherListFragment.class.toString();
 	
@@ -72,7 +67,8 @@ public class WeatherListFragment extends ListFragment implements WeatherLoader.L
         ((WeatherListAdapter)getListAdapter()).notifyDataSetChanged();
     }
 	
-	// WeatherLoader.Listener callback
+	// WeatherLoader.OnWeatherLoadedListener callback
+	// Weather finished loading (icons may not have completed)
 	public void onWeatherLoaded(ArrayList<WeatherStatus> weatherList)
 	{
 		testWeatherList(weatherList);
@@ -90,7 +86,7 @@ public class WeatherListFragment extends ListFragment implements WeatherLoader.L
     	return _selectedWeatherStatus;
     }
 	
-	// Custom adapter
+	// Custom Adapter
 	private class WeatherListAdapter extends ArrayAdapter<WeatherStatus>
 	{
 		public WeatherListAdapter(ArrayList<WeatherStatus> weatherList)
@@ -124,19 +120,12 @@ public class WeatherListFragment extends ListFragment implements WeatherLoader.L
 			// update views here
 			holder.cityNameTextView.setText(curr.getCityName());
 			holder.temperatureTextView.setText(curr.getTemperatureString());
-			Uri imageUri = curr.getWeatherIconUri();
-			try {
-				holder.weatherIconView.setImageBitmap(Media.getBitmap(getActivity().getContentResolver(), imageUri));
-			}
-			catch (Exception e) {
-				Log.e(TAG, "Error reading bitmap: " + e.getMessage());
-			}
+			holder.weatherIconView.setImageBitmap(curr.getWeatherIconBitmap());
 
 			return newView;
 		}
 
 		private class ViewHolder {
-
 			TextView  cityNameTextView;
 			TextView  temperatureTextView;
 			ImageView weatherIconView;

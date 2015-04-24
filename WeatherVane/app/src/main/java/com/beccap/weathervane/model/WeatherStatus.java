@@ -6,24 +6,18 @@
 
 package com.beccap.weathervane.model;
 
-import android.net.Uri;
-import android.util.Log;
-
-import com.beccap.weathervane.MainActivity;
+import android.graphics.Bitmap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class WeatherStatus implements Serializable
+public class WeatherStatus
 {
 	private static final String TAG = WeatherStatus.class.toString();
-
-	public static final long serialVersionUUID = 0L;
 
 	private String _cityName;
 	private long   _dateTime;
@@ -34,9 +28,11 @@ public class WeatherStatus implements Serializable
 	private double _windSpeed;
 	private double _windDirection;
 	private String _weatherDescription;
-	private String _weatherIcon;
+	private String _weatherIconString;
 
 	private String _formattedDateTime;
+
+	private WeatherIconTable _weatherIconLoader = null;
 
 	private static final String DEGREE = "\u00b0";
 	private static final SimpleDateFormat _dateFormatter =
@@ -44,6 +40,7 @@ public class WeatherStatus implements Serializable
 
 	// serialization - input (constructor)
 	public WeatherStatus(JSONObject json) throws JSONException {
+
 		JSONObject coord   = json.getJSONObject(WeatherAPI.WEATHER_COORD_TOKEN);
 		JSONObject main    = json.getJSONObject(WeatherAPI.WEATHER_MAIN_TOKEN);
 		JSONObject wind    = json.getJSONObject(WeatherAPI.WEATHER_WIND_TOKEN);
@@ -63,7 +60,7 @@ public class WeatherStatus implements Serializable
 		_windDirection = wind.getDouble(WeatherAPI.WIND_DIRECTION_TOKEN);
 
 		_weatherDescription = weather.getString(WeatherAPI.WEATHER_DESCRIPTION_TOKEN);
-		_weatherIcon        = weather.getString(WeatherAPI.WEATHER_ICON_TOKEN);
+		_weatherIconString  = weather.getString(WeatherAPI.WEATHER_ICON_TOKEN);
 
 		// create a formatted date-time string by converting ms since epoch to Date
 		// (NOTE: _dateTime given in seconds; must convert to millis first)
@@ -72,7 +69,8 @@ public class WeatherStatus implements Serializable
 
 	// serialization - output
 	public JSONObject toJSON() throws JSONException {
-		JSONObject json = new JSONObject();
+		JSONObject json  = new JSONObject();
+
 		JSONObject coord = new JSONObject();
 		JSONObject main  = new JSONObject();
 		JSONObject wind  = new JSONObject();
@@ -96,7 +94,7 @@ public class WeatherStatus implements Serializable
 		json.put(WeatherAPI.WEATHER_WIND_TOKEN, wind);
 
 		weather.put(WeatherAPI.WEATHER_DESCRIPTION_TOKEN, _weatherDescription);
-		weather.put(WeatherAPI.WEATHER_ICON_TOKEN, _weatherIcon);
+		weather.put(WeatherAPI.WEATHER_ICON_TOKEN, _weatherIconString);
 		weatherArray.put(0,weather);
 		json.put(WeatherAPI.WEATHER_WEATHER_TOKEN, weatherArray);
 
@@ -188,13 +186,12 @@ public class WeatherStatus implements Serializable
 		return Integer.toString((int)(_windDirection + .5)) + DEGREE + " (" + desc + ")";
 	}
 
-	public Uri getWeatherIconUri() {
+	public String getWeatherIconString() {
+		return _weatherIconString;
+	}
 
-		// get path to drawable
-		String path = "android.resource://" + MainActivity.PACKAGE_NAME + "/drawable/icon" + _weatherIcon;
-		Log.d(TAG, "path to icon: " + path);
-
-		return Uri.parse(path);
+	public Bitmap getWeatherIconBitmap() {
+		return WeatherIconTable.findIconBitmap(_weatherIconString);
 	}
 
 	// description (for debugging)
@@ -205,7 +202,7 @@ public class WeatherStatus implements Serializable
 				        "Current Temp: " + getTemperatureString() + "\n" +
 				        "Pressure: " + getPressureString() + "; Humidity: " + getHumidityString() + "\n" +
 						"Wind Speed: " + getWindSpeedString() + "; Wind Direction: " + getWindDirectionString() + "\n" +
-						"Description: " + getWeatherDescription() + "; Icon: " + _weatherIcon;
+						"Description: " + getWeatherDescription() + "; IconString: " + _weatherIconString;
 		return result;
 	}
 }

@@ -6,15 +6,15 @@
 
 package com.beccap.weathervane;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.beccap.weathervane.model.WeatherStatus;
-
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+
+import com.beccap.weathervane.model.WeatherStatus;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class DetailActivity extends ActionBarActivity {
 	
@@ -44,6 +44,8 @@ public class DetailActivity extends ActionBarActivity {
 				String jsonString = weatherData.getString(WeatherStatusFragment.WEATHER_KEY);
 				if (jsonString != null) {
 					try {
+						// we don't need to listen for changes here because any changes to the
+						// weatherStatus will be pushed to this view by the master.
 						weatherStatus = new WeatherStatus(new JSONObject(jsonString));
 					}
 					catch (JSONException e) {

@@ -8,9 +8,6 @@
 
 package com.beccap.weathervane;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -21,11 +18,16 @@ import android.widget.TextView;
 
 import com.beccap.weathervane.model.WeatherStatus;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class WeatherStatusFragment extends Fragment {
 
-	public static final String WEATHER_KEY = "weatherStatus_record";
 	private static final String TAG = WeatherStatusFragment.class.toString();
-	
+
+	public static final String WEATHER_KEY = "weatherStatus_record";
+	public static final String ACTION_UPDATE = MainActivity.PACKAGE_NAME + ".update";
+
 	private WeatherStatus _weatherStatus = null;
 	
 	public static WeatherStatusFragment newInstance(WeatherStatus weatherStatus)
@@ -47,20 +49,10 @@ public class WeatherStatusFragment extends Fragment {
 		if (savedInstanceState != null) { // restarted with saved bundle
 			String jsonString; // json representation of WeatherStatus
 			jsonString = savedInstanceState.getString(WEATHER_KEY);
-			try {
-                if (jsonString != null) {
-                    _weatherStatus = new WeatherStatus(new JSONObject(jsonString));
-                }
-                else {
-                    _weatherStatus = null;
-                }
-			}
-			catch (JSONException e) {
-				Log.e(TAG, "Error loading savedInstanceState: " + e.getMessage());
-			}
+			update(jsonString);
 		}
 	}
-	
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent,
                              Bundle savedInstanceState)
@@ -89,14 +81,30 @@ public class WeatherStatusFragment extends Fragment {
 			Log.e(TAG, "Error saving instance state: " + e.getMessage());
 		}
 	}
-	
-    
+
     // public method to update the contents of view based on current weather status
     public void update(WeatherStatus weatherStatus)
     {
     	_weatherStatus = weatherStatus;
     	updateView(getView());
     }
+
+	// alternative form of update that accepts a JSON String as a parameter
+	public void update(String jsonString) {
+		try {
+			WeatherStatus weatherStatus;
+			if (jsonString != null) {
+				weatherStatus = new WeatherStatus(new JSONObject(jsonString));
+			}
+			else {
+				weatherStatus = null;
+			}
+			update(weatherStatus);
+		}
+		catch (JSONException e) {
+			Log.e(TAG, "Error parsing JSON String while updating WeatherStatus: " + e.getMessage());
+		}
+	}
     
     // update UI based on this weather status
     private void updateView(View view)
