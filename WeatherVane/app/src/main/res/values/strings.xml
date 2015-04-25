@@ -3,7 +3,11 @@
 
     <string name="app_name">WeatherVane</string>
     <string name="action_refresh">Refresh</string>
-    
-    <string name="detail_label_location">Location</string>
+
+    <string name="detail_not_selected">No Weather Selected</string>
+    <string name="detail_label_wind">Wind: </string>
+    <string name="detail_label_pressure">Pressure: </string>
+    <string name="detail_label_humidity">Humidity: </string>
+    <string name="detail_label_last_updated">Last Reported: </string>
 
 </resources>

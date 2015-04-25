@@ -32,13 +32,12 @@ public class WeatherStatus
 
 	private String _formattedDateTime;
 
-	private WeatherIconTable _weatherIconLoader = null;
-
-	private static final String DEGREE = "\u00b0";
+	private static final String DEGREE_SYMBOL = "\u00b0";
 	private static final SimpleDateFormat _dateFormatter =
 			new SimpleDateFormat("M/d/yyyy h:mm a", java.util.Locale.getDefault());
 
-	// serialization - input (constructor)
+	// ============ Serialization =================================================================
+	// Input (Constructor)
 	public WeatherStatus(JSONObject json) throws JSONException {
 
 		JSONObject coord   = json.getJSONObject(WeatherAPI.WEATHER_COORD_TOKEN);
@@ -67,7 +66,7 @@ public class WeatherStatus
 		_formattedDateTime = _dateFormatter.format(new Date(_dateTime * 1000L));
 	}
 
-	// serialization - output
+	// Output
 	public JSONObject toJSON() throws JSONException {
 		JSONObject json  = new JSONObject();
 
@@ -101,50 +100,32 @@ public class WeatherStatus
 		return json;
 	}
 
-	// getters
-	public String getCityName() {
-		return _cityName;
-	}
+	//============ Simple Getters =================================================================
+	public String getCityName() { return _cityName; }
 
-	public long getDateTime() {
-		return _dateTime;
-	}
+	public long getDateTime() { return _dateTime; }
 
-	public double getLat() {
-		return _lat;
-	}
+	public double getLat() { return _lat; }
 
-	public double getLon() {
-		return _lon;
-	}
+	public double getLon() { return _lon; }
 
-	public double getCurrentTemp() {
-		return _currentTemp;
-	}
+	public double getCurrentTemp() { return _currentTemp; }
 
-	public double getPressure() {
-		return _pressure;
-	}
+	public double getPressure() { return _pressure; }
 
-	public int getHumidity() {
-		return _humidity;
-	}
+	public int getHumidity() { return _humidity; }
 
-	public double getWindSpeed() {
-		return _windSpeed;
-	}
+	public double getWindSpeed() { return _windSpeed; }
 
-	public double getWindDirection() {
-		return _windDirection;
-	}
+	public double getWindDirection() { return _windDirection; }
 
-	public String getWeatherDescription() {
-		return _weatherDescription;
-	}
+	public String getWeatherDescription() { return _weatherDescription; }
 
-	public String getFormattedDateTime() {
-		return(_formattedDateTime);
-	}
+	public String getWeatherIconString() { return _weatherIconString; }
+
+	//============ Formatted Getters (for Display) ================================================
+
+	public String getFormattedDateTime() { return(_formattedDateTime); }
 
 	public String getPressureString() {
 		return Integer.toString((int)(_pressure + .5)) + " hpa";
@@ -155,13 +136,14 @@ public class WeatherStatus
 	}
 
 	public String getTemperatureString() {
-		return Integer.toString((int)(_currentTemp + .5)) + DEGREE + " F";
+		return Integer.toString((int)(_currentTemp + .5)) + DEGREE_SYMBOL + " F";
 	}
 
-	public String getWindSpeedString() {
-		return Double.toString(_windSpeed) + " mph";
+	public String getWindString() {
+		return Double.toString(_windSpeed) + " mph, " + getWindDirectionString();
 	}
 
+	// Cardinal directions
 	public String getWindDirectionString() {
 		String desc;
 
@@ -183,25 +165,21 @@ public class WeatherStatus
 		else if (_windDirection < 348.75) { desc = "NNW"; }
 		else                              { desc = "N"; }
 
-		return Integer.toString((int)(_windDirection + .5)) + DEGREE + " (" + desc + ")";
-	}
-
-	public String getWeatherIconString() {
-		return _weatherIconString;
+		return Integer.toString((int)(_windDirection + .5)) + DEGREE_SYMBOL + " (" + desc + ")";
 	}
 
 	public Bitmap getWeatherIconBitmap() {
 		return WeatherIconTable.findIconBitmap(_weatherIconString);
 	}
 
-	// description (for debugging)
+	//============ Description (for debugging) ====================================================
 	public String toString() {
 		String result = "City Name: " + _cityName + "\n" +
 				        "Date/Time: " + getFormattedDateTime() + "\n" +
 				        "Lat: " + _lat + "; Lon: " + _lon + "\n" +
 				        "Current Temp: " + getTemperatureString() + "\n" +
 				        "Pressure: " + getPressureString() + "; Humidity: " + getHumidityString() + "\n" +
-						"Wind Speed: " + getWindSpeedString() + "; Wind Direction: " + getWindDirectionString() + "\n" +
+						"Wind: " + getWindString() + "\n" +
 						"Description: " + getWeatherDescription() + "; IconString: " + _weatherIconString;
 		return result;
 	}

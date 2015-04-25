@@ -20,7 +20,7 @@ public class MainActivity extends ActionBarActivity implements WeatherListFragme
 
 	private boolean _isTwoPane;
 
-	// Life Cycle
+	//============ Life Cycle =====================================================================
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -75,8 +75,8 @@ public class MainActivity extends ActionBarActivity implements WeatherListFragme
 		super.onDestroy();
 	}
 	
-	// WeatherListFragment.OnWeatherStatusSelectedListener interface
-	// - called when list item is selected
+	//============ WeatherListFragment.OnWeatherStatusSelectedListener ============================
+	// called when list item is selected
 	public void onWeatherStatusSelected(WeatherStatus weatherStatus)
 	{
 		if (_isTwoPane) {

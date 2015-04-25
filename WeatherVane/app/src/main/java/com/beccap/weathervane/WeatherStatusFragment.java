@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.beccap.weathervane.model.WeatherStatus;
@@ -26,9 +27,16 @@ public class WeatherStatusFragment extends Fragment {
 	private static final String TAG = WeatherStatusFragment.class.toString();
 
 	public static final String WEATHER_KEY = "weatherStatus_record";
-	public static final String ACTION_UPDATE = MainActivity.PACKAGE_NAME + ".update";
 
 	private WeatherStatus _weatherStatus = null;
+
+	private TextView  _cityView;
+	private TextView  _temperatureView;
+	private ImageView _weatherIconView;
+	private TextView  _windView;
+	private TextView  _pressureView;
+	private TextView  _humidityView;
+	private TextView  _lastUpdatedView;
 	
 	public static WeatherStatusFragment newInstance(WeatherStatus weatherStatus)
 	{
@@ -38,7 +46,7 @@ public class WeatherStatusFragment extends Fragment {
 		return weatherStatusFragment;
 	}
 
-    // Life Cycle
+    //============ Life Cycle =====================================================================
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -57,10 +65,20 @@ public class WeatherStatusFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup parent,
                              Bundle savedInstanceState)
     {
-    	Log.d(TAG,"onCreateView");
+    	Log.d(TAG, "onCreateView");
     	super.onCreateView(inflater, parent, savedInstanceState);
     	
         View view = inflater.inflate(R.layout.fragment_detail, parent, false);
+
+		_cityView        = (TextView)view.findViewById(R.id.detail_text_city);
+		_temperatureView = (TextView)view.findViewById(R.id.detail_text_temperature);
+		_windView        = (TextView)view.findViewById(R.id.detail_text_wind);
+		_pressureView    = (TextView)view.findViewById(R.id.detail_text_pressure);
+		_humidityView    = (TextView)view.findViewById(R.id.detail_text_humidity);
+		_lastUpdatedView = (TextView)view.findViewById(R.id.detail_text_last_updated);
+
+		_weatherIconView = (ImageView)view.findViewById(R.id.detail_weather_icon);
+
         updateView(view);
         
         return view;
@@ -82,6 +100,7 @@ public class WeatherStatusFragment extends Fragment {
 		}
 	}
 
+	//============ Update methods =================================================================
     // public method to update the contents of view based on current weather status
     public void update(WeatherStatus weatherStatus)
     {
@@ -109,24 +128,24 @@ public class WeatherStatusFragment extends Fragment {
     // update UI based on this weather status
     private void updateView(View view)
     {
+		ViewGroup viewGroup = (ViewGroup)view;
+
     	Log.d(TAG, "updateView");
-    	TextView titleText = (TextView)view.findViewById(R.id.detail_text_title);
-    	TextView locationLabel = (TextView)view.findViewById(R.id.detail_label_location);
-        TextView locationText = (TextView)view.findViewById(R.id.detail_text_location);
-      
+		int subviewVisibility = View.INVISIBLE;
+
         if (_weatherStatus != null) {
-        	// set title text
-        	titleText.setText("WeatherStatus: ");
-        	
-//        	String locationString = "(" + _weatherStatus.getLatitude() + ", " + _weatherStatus.getLongitude() + ")";
-//        	locationText.setText(locationString);
-        	locationLabel.setVisibility(View.VISIBLE);
-        	locationText.setVisibility(View.VISIBLE);
+			_cityView.setText(_weatherStatus.getCityName());
+			_temperatureView.setText(_weatherStatus.getTemperatureString());
+			_weatherIconView.setImageBitmap(_weatherStatus.getWeatherIconBitmap());
+			_windView.setText(_weatherStatus.getWindString());
+			_pressureView.setText(_weatherStatus.getPressureString());
+			_humidityView.setText(_weatherStatus.getHumidityString());
+			_lastUpdatedView.setText(_weatherStatus.getFormattedDateTime());
+
+			subviewVisibility = View.VISIBLE;
         }
-        else {
-        	titleText.setVisibility(View.GONE);
-        	locationLabel.setVisibility(View.GONE);
-        	locationText.setVisibility(View.GONE);
-        }
+		for (int i = 0; i < viewGroup.getChildCount(); ++i) {
+			viewGroup.getChildAt(i).setVisibility(subviewVisibility);
+		}
     }
 }

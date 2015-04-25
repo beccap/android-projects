@@ -82,7 +82,6 @@ public class WeatherListFragment extends ListFragment
 	}
 
 	//============ Menu Options ===================================================================
-
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
