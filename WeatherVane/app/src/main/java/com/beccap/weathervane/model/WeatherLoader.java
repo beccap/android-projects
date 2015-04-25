@@ -11,6 +11,7 @@
 
 package com.beccap.weathervane.model;
 
+import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -44,12 +45,12 @@ public class WeatherLoader
 
 	// call this to start reading the JSON; will conclude by loading the Array with values
 	// parsed from the JSON string.
-	public void startLoading(double lat, double lon, int count) {
+	public void startLoading(Location location, int count) {
 
 		String weatherURL = WeatherAPI.WEATHER_URL +
 							WeatherAPI.WEATHER_API_QUERY +
-							WeatherAPI.WEATHER_URL_GET_LAT + lat +
-							WeatherAPI.WEATHER_URL_GET_LON + lon +
+							WeatherAPI.WEATHER_URL_GET_LAT + location.getLatitude() +
+							WeatherAPI.WEATHER_URL_GET_LON + location.getLongitude() +
 							WeatherAPI.WEATHER_URL_GET_COUNT + count;
 		Log.d(TAG, "URL: " + weatherURL);
 		new WeatherJSONReader(weatherURL).execute();

@@ -5,6 +5,7 @@
 package com.beccap.weathervane;
 
 import android.app.Activity;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -17,29 +18,40 @@ import android.widget.TextView;
 
 import com.beccap.weathervane.model.WeatherLoader;
 import com.beccap.weathervane.model.WeatherStatus;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 
-public class WeatherListFragment extends ListFragment implements WeatherLoader.OnWeatherLoadedListener {
+public class WeatherListFragment extends ListFragment
+		implements WeatherLoader.OnWeatherLoadedListener,
+		ConnectionCallbacks, OnConnectionFailedListener {
 	
 	private static final String TAG = WeatherListFragment.class.toString();
-	
+
 	public interface OnWeatherStatusSelectedListener {
 		void onWeatherStatusSelected(WeatherStatus weatherStatus);
 	}
-	
+
 	private OnWeatherStatusSelectedListener _onSelectedListener;
 	private WeatherStatus                   _selectedWeatherStatus = null;
 
-	// Life Cycle
+	private GoogleApiClient _googleApiClient;
+	private Location        _currentLocation = null;
+
+	//============ Life Cycle =====================================================================
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true); // ensures we don't have to reload the json upon rotation
 		
-		Log.d(TAG, "in onCreate, loading weather");
-		new WeatherLoader(this).startLoading(45.715406, -122.872803, 10);
+		Log.d(TAG, "in onCreate, connecting to google api services");
+		_googleApiClient = buildGoogleApiClient();
+		_googleApiClient.connect();
 	}
 	
 	@Override
@@ -53,11 +65,24 @@ public class WeatherListFragment extends ListFragment implements WeatherLoader.O
 			_onSelectedListener = (OnWeatherStatusSelectedListener) activity;
 		}
 		catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString() + " missing required implementation of OnWeatherStatusSelectedListener");
+			throw new ClassCastException(activity.toString() + e.getMessage());
 		}
 	}
 
-	// ListAdapter callbacks
+	@Override
+	public void onDestroy() {
+		_googleApiClient.disconnect();
+		super.onDestroy();
+	}
+
+	//============ Getters ========================================================================
+	// Getter for currently selected item
+	public WeatherStatus getSelectedWeatherStatus()
+	{
+		return _selectedWeatherStatus;
+	}
+
+	//============ ListAdapter callbacks ==========================================================
 	@Override
 	public void onListItemClick(ListView listView, View view, int pos, long id)
 	{
@@ -80,13 +105,7 @@ public class WeatherListFragment extends ListFragment implements WeatherLoader.O
 		setListAdapter(adapter);
 	}
 
-	// Getter for currently selected item
-    public WeatherStatus getSelectedWeatherStatus()
-    {
-    	return _selectedWeatherStatus;
-    }
-	
-	// Custom Adapter
+	//============ Custom List Adapter ============================================================
 	private class WeatherListAdapter extends ArrayAdapter<WeatherStatus>
 	{
 		public WeatherListAdapter(ArrayList<WeatherStatus> weatherList)
@@ -125,14 +144,66 @@ public class WeatherListFragment extends ListFragment implements WeatherLoader.O
 			return newView;
 		}
 
+		// view holder pattern
 		private class ViewHolder {
 			TextView  cityNameTextView;
 			TextView  temperatureTextView;
 			ImageView weatherIconView;
 		}
 	}
-	
-	// Debugging
+
+	//============ Location Handling ==============================================================
+	// update location and weather based on current data
+	private void refreshLocationAndWeather() {
+		_currentLocation = getGoogleLocation();
+		Log.d(TAG, "currentLocation: " + _currentLocation.toString());
+		if (_currentLocation != null) {
+			Log.d(TAG, "loading weather");
+			new WeatherLoader(this).startLoading(_currentLocation, 10);
+		}
+	}
+
+	// get current location
+	private Location getGoogleLocation() {
+		Location location = LocationServices.FusedLocationApi.getLastLocation(_googleApiClient);
+		return location;
+	}
+
+	// ============ Google API Client =============================================================
+	protected synchronized GoogleApiClient buildGoogleApiClient() {
+		Log.d(TAG, "building api client");
+		return new GoogleApiClient.Builder(getActivity())
+				.addConnectionCallbacks(this)
+				.addOnConnectionFailedListener(this)
+				.addApi(LocationServices.API)
+				.build();
+	}
+
+	// ============ Google API Callbacks ==========================================================
+	@Override
+	public void onConnected(Bundle bundle) {
+		Log.d(TAG, "onConnected");
+		refreshLocationAndWeather();
+	}
+
+	@Override
+	public void onConnectionSuspended(int i) {
+		Log.e(TAG, "Connection to Google API Client suspended.");
+	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult connectionResult) {
+		Log.e(TAG, "Connection to Google API Client failed.");
+		// TODO: Set up more sophisticated error handling
+
+		// for now, just load weather from an arbitrary point
+		_currentLocation = new Location("dummy provider");
+		_currentLocation.setLatitude(45.715915);
+		_currentLocation.setLongitude(-122.868617);
+		new WeatherLoader(this).startLoading(_currentLocation, 10);
+	}
+
+	// ============ Debugging =====================================================================
 	private void testWeatherList(ArrayList<WeatherStatus> weatherList)
 	{
 		if (weatherList == null) {

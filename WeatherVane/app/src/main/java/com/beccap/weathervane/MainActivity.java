@@ -17,7 +17,7 @@ public class MainActivity extends ActionBarActivity implements WeatherListFragme
 
 	public static String PACKAGE_NAME;
 	public static final long TEN_MINUTES = 600000;
-	
+
 	private boolean _isTwoPane;
 
 	// Life Cycle
