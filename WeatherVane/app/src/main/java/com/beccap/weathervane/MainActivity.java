@@ -16,6 +16,7 @@ public class MainActivity extends ActionBarActivity implements WeatherListFragme
 	private static final String TAG = MainActivity.class.toString();
 
 	public static String PACKAGE_NAME;
+	public static final long TEN_MINUTES = 600000;
 	
 	private boolean _isTwoPane;
 
@@ -27,7 +28,12 @@ public class MainActivity extends ActionBarActivity implements WeatherListFragme
 		setContentView(R.layout.activity_main);
 
 		PACKAGE_NAME = getApplicationContext().getPackageName();
-		
+
+		// initialize alarm scheduler and cancel any alarms that may have been set
+		AlarmScheduler.initialize(this);
+		AlarmScheduler.cancelScheduledAlarms();
+
+		// set up fragments
 		FragmentManager fm = getSupportFragmentManager();
 		WeatherListFragment listFragment = (WeatherListFragment)fm.findFragmentById(R.id.fragment_container);
 
@@ -60,6 +66,13 @@ public class MainActivity extends ActionBarActivity implements WeatherListFragme
             }
         }
 		Log.d(TAG, "in onCreate setting twoPane to " + _isTwoPane);
+	}
+
+	@Override
+	protected void onDestroy() {
+		// Schedule alarm notification to remind user to check the weather
+		AlarmScheduler.scheduleAlarm(TEN_MINUTES);
+		super.onDestroy();
 	}
 	
 	// WeatherListFragment.OnWeatherStatusSelectedListener interface
