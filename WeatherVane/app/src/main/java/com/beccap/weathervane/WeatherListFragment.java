@@ -9,6 +9,9 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -39,6 +42,8 @@ public class WeatherListFragment extends ListFragment
 	private OnWeatherStatusSelectedListener _onSelectedListener;
 	private WeatherStatus                   _selectedWeatherStatus = null;
 
+	private WeatherListAdapter _adapter;
+
 	private GoogleApiClient _googleApiClient;
 	private Location        _currentLocation = null;
 
@@ -48,6 +53,7 @@ public class WeatherListFragment extends ListFragment
 	{
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true); // ensures we don't have to reload the json upon rotation
+		setHasOptionsMenu(true);
 		
 		Log.d(TAG, "in onCreate, connecting to google api services");
 		_googleApiClient = buildGoogleApiClient();
@@ -75,6 +81,28 @@ public class WeatherListFragment extends ListFragment
 		super.onDestroy();
 	}
 
+	//============ Menu Options ===================================================================
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.main, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		switch (item.getItemId()) {
+			case R.id.action_refresh:
+				refreshLocationAndWeather();
+				return true;
+
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
 	//============ Getters ========================================================================
 	// Getter for currently selected item
 	public WeatherStatus getSelectedWeatherStatus()
@@ -89,7 +117,7 @@ public class WeatherListFragment extends ListFragment
 		WeatherStatus weatherStatus = (WeatherStatus)getListAdapter().getItem(pos);
 		_selectedWeatherStatus = weatherStatus;
 		_onSelectedListener.onWeatherStatusSelected(weatherStatus);
-        ((WeatherListAdapter)getListAdapter()).notifyDataSetChanged();
+        _adapter.notifyDataSetChanged();
     }
 	
 	// WeatherLoader.OnWeatherLoadedListener callback
@@ -101,8 +129,8 @@ public class WeatherListFragment extends ListFragment
 			Log.e(TAG, "null Weather List passed to onWeatherLoaded");
 			return;
 		}
-		WeatherListAdapter adapter = new WeatherListAdapter(weatherList);
-		setListAdapter(adapter);
+		_adapter = new WeatherListAdapter(weatherList);
+		setListAdapter(_adapter);
 	}
 
 	//============ Custom List Adapter ============================================================
@@ -155,6 +183,11 @@ public class WeatherListFragment extends ListFragment
 	//============ Location Handling ==============================================================
 	// update location and weather based on current data
 	private void refreshLocationAndWeather() {
+		if (_adapter != null) {
+			_adapter.clear();
+			_adapter.notifyDataSetChanged();
+		}
+
 		_currentLocation = getGoogleLocation();
 		Log.d(TAG, "currentLocation: " + _currentLocation.toString());
 		if (_currentLocation != null) {
