@@ -36,7 +36,7 @@ public class WeatherListFragment extends ListFragment
 	private static final String TAG = WeatherListFragment.class.toString();
 
 	public interface OnWeatherStatusSelectedListener {
-		void onWeatherStatusSelected(WeatherStatus weatherStatus);
+		void onWeatherStatusSelected(WeatherStatus weatherStatus, Location currentLocation);
 	}
 
 	private OnWeatherStatusSelectedListener _onSelectedListener;
@@ -104,10 +104,8 @@ public class WeatherListFragment extends ListFragment
 
 	//============ Getters ========================================================================
 	// Getter for currently selected item
-	public WeatherStatus getSelectedWeatherStatus()
-	{
-		return _selectedWeatherStatus;
-	}
+	public WeatherStatus getSelectedWeatherStatus() { return _selectedWeatherStatus; }
+	public Location getCurrentLocation() { return _currentLocation; }
 
 	//============ ListAdapter callbacks ==========================================================
 	@Override
@@ -115,7 +113,7 @@ public class WeatherListFragment extends ListFragment
 	{
 		WeatherStatus weatherStatus = (WeatherStatus)getListAdapter().getItem(pos);
 		_selectedWeatherStatus = weatherStatus;
-		_onSelectedListener.onWeatherStatusSelected(weatherStatus);
+		_onSelectedListener.onWeatherStatusSelected(weatherStatus,_currentLocation);
         _adapter.notifyDataSetChanged();
     }
 	

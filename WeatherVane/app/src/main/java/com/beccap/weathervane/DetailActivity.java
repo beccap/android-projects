@@ -6,6 +6,7 @@
 
 package com.beccap.weathervane;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
@@ -38,10 +39,11 @@ public class DetailActivity extends ActionBarActivity {
 			
 			// get earthquake data from intent
 			WeatherStatus weatherStatus = null; // null is an OK state
+			Location currentLocation = null;
 
-			Bundle weatherData = getIntent().getExtras();
-			if (weatherData != null) {
-				String jsonString = weatherData.getString(WeatherStatusFragment.WEATHER_KEY);
+			Bundle data = getIntent().getExtras();
+			if (data != null) {
+				String jsonString = data.getString(WeatherStatusFragment.WEATHER_KEY);
 				if (jsonString != null) {
 					try {
 						// we don't need to listen for changes here because any changes to the
@@ -52,10 +54,16 @@ public class DetailActivity extends ActionBarActivity {
 						Log.e(TAG, "Error retrieving earthquake from intent: " + e.getMessage());
 					}
 				}
+				if (data.getDouble(WeatherStatusFragment.LATITUDE_KEY) > 0) {
+					currentLocation = new Location("dummy provider");
+					currentLocation.setLatitude(data.getDouble(WeatherStatusFragment.LATITUDE_KEY));
+					currentLocation.setLongitude(data.getDouble(WeatherStatusFragment.LONGITUDE_KEY));
+				}
 			}
 
 			// create new fragment for this weather Status
-			WeatherStatusFragment detailFragment = WeatherStatusFragment.newInstance(weatherStatus);
+			WeatherStatusFragment detailFragment =
+					WeatherStatusFragment.newInstance(weatherStatus, currentLocation);
 			
 			// pass along earthquakeData to Fragment
 			

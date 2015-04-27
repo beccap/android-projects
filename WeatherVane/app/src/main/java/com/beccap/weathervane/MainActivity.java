@@ -1,6 +1,7 @@
 package com.beccap.weathervane;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
@@ -57,8 +58,9 @@ public class MainActivity extends ActionBarActivity implements WeatherListFragme
             if ((detailView != null) && (detailView.getVisibility() == View.VISIBLE)) {
                 WeatherStatusFragment detailFragment = (WeatherStatusFragment) fm.findFragmentById(R.id.fragment_detail);
                 WeatherStatus weatherStatus = listFragment.getSelectedWeatherStatus();
+				Location currentLocation = listFragment.getCurrentLocation();
                 if (detailFragment == null) {
-                    detailFragment = WeatherStatusFragment.newInstance(weatherStatus);
+                    detailFragment = WeatherStatusFragment.newInstance(weatherStatus, currentLocation);
                     fm.beginTransaction()
                             .add(R.id.fragment_detail, detailFragment)
                             .commit();
@@ -77,26 +79,30 @@ public class MainActivity extends ActionBarActivity implements WeatherListFragme
 	
 	//============ WeatherListFragment.OnWeatherStatusSelectedListener ============================
 	// called when list item is selected
-	public void onWeatherStatusSelected(WeatherStatus weatherStatus)
+	public void onWeatherStatusSelected(WeatherStatus weatherStatus, Location currentLocation)
 	{
 		if (_isTwoPane) {
-			// we're in 2-pane layout, so update fragment
+			// we're in 2-pane layout, so update fragment with new information
 			Log.d(TAG, "item selected; isTwoPane, updating detailFragment");
 			FragmentManager fm = getSupportFragmentManager();
 			WeatherStatusFragment detailFragment = (WeatherStatusFragment)fm.findFragmentById(R.id.fragment_detail);
 			if (detailFragment != null) {
-				detailFragment.update(weatherStatus);
+				detailFragment.update(weatherStatus, currentLocation);
 			}
 			else {
 				Log.e(TAG, "null detail fragment in onWeatherStatusSelected");
 			}
 		}
-		else { // single-pane, so launch activity with weather status bundled up
+		else { // single-pane, so launch activity with weather status and location bundled up
 			try {
 				if (weatherStatus != null) {
 					Log.d(TAG, "item selected; is single pane, launching activity");
 					Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
 					intent.putExtra(WeatherStatusFragment.WEATHER_KEY, weatherStatus.toJSON().toString());
+					if (currentLocation != null) {
+						intent.putExtra(WeatherStatusFragment.LATITUDE_KEY,currentLocation.getLatitude());
+						intent.putExtra(WeatherStatusFragment.LONGITUDE_KEY,currentLocation.getLongitude());
+					}
 					startActivity(intent);
 				}
 			}
