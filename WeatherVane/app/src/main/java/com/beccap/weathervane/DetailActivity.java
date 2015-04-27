@@ -21,6 +21,10 @@ public class DetailActivity extends ActionBarActivity {
 	
 	private static final String TAG = DetailActivity.class.toString();
 
+	public static final String WEATHER_KEY   = "key_weatherStatus";
+	public static final String LATITUDE_KEY  = "key_latitude";
+	public static final String LONGITUDE_KEY = "key_longitude";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -34,30 +38,30 @@ public class DetailActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_detail);
 
+		// make sure it's the first time
         if (savedInstanceState == null) {
-			Log.d(TAG, "creating new fragment");
-			
-			// get earthquake data from intent
+
 			WeatherStatus weatherStatus = null; // null is an OK state
 			Location currentLocation = null;
 
+			// get data from intent
 			Bundle data = getIntent().getExtras();
 			if (data != null) {
-				String jsonString = data.getString(WeatherStatusFragment.WEATHER_KEY);
+				// retrieve jsonString from intent and parse
+				String jsonString = data.getString(WEATHER_KEY);
 				if (jsonString != null) {
 					try {
-						// we don't need to listen for changes here because any changes to the
-						// weatherStatus will be pushed to this view by the master.
 						weatherStatus = new WeatherStatus(new JSONObject(jsonString));
 					}
 					catch (JSONException e) {
-						Log.e(TAG, "Error retrieving earthquake from intent: " + e.getMessage());
+						Log.e(TAG, "Error retrieving weather status from intent: " + e.getMessage());
 					}
 				}
-				if (data.getDouble(WeatherStatusFragment.LATITUDE_KEY) > 0) {
-					currentLocation = new Location("dummy provider");
-					currentLocation.setLatitude(data.getDouble(WeatherStatusFragment.LATITUDE_KEY));
-					currentLocation.setLongitude(data.getDouble(WeatherStatusFragment.LONGITUDE_KEY));
+				// retrieve location data from intent
+				if (data.getDouble(LATITUDE_KEY) > 0) {
+					currentLocation = new Location("");
+					currentLocation.setLatitude(data.getDouble(LATITUDE_KEY));
+					currentLocation.setLongitude(data.getDouble(LONGITUDE_KEY));
 				}
 			}
 
@@ -65,8 +69,7 @@ public class DetailActivity extends ActionBarActivity {
 			WeatherStatusFragment detailFragment =
 					WeatherStatusFragment.newInstance(weatherStatus, currentLocation);
 			
-			// pass along earthquakeData to Fragment
-			
+			// pass along weather data to Fragment
 			FragmentManager fm = getSupportFragmentManager();
 			fm.beginTransaction()
 			.replace(R.id.fragment_detail, detailFragment)

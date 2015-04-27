@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.beccap.weathervane.model.WeatherStatus;
+import com.google.android.gms.maps.MapsInitializer;
 
 import org.json.JSONException;
 
@@ -34,40 +35,38 @@ public class MainActivity extends ActionBarActivity implements WeatherListFragme
 		AlarmScheduler.initialize(this);
 		AlarmScheduler.cancelScheduledAlarms();
 
+		// initialize maps
+		MapsInitializer.initialize(this);
+
 		// set up fragments
 		FragmentManager fm = getSupportFragmentManager();
 		WeatherListFragment listFragment = (WeatherListFragment)fm.findFragmentById(R.id.fragment_container);
 
-        Log.d(TAG, "loading list fragment");
 		// always load the list fragment
 		// note: it retains itself
 		if (listFragment == null) { 
-			Log.d(TAG, "adding new ListFragment");
 			listFragment = new WeatherListFragment();
 			fm.beginTransaction()
 				.add(R.id.fragment_container, listFragment)
 				.commit();
 		}
 		
-		// if the detail view is visible, then make sure it is showing the right content
+		// if the detail fragment is visible, then make sure it is showing the right content
         _isTwoPane = getResources().getBoolean(R.bool.is_two_pane);
-        Log.d(TAG, "in onCreate, about to test to see if we need to add detail fragment");
 
         if (_isTwoPane) {
             View detailView = findViewById(R.id.fragment_detail);
             if ((detailView != null) && (detailView.getVisibility() == View.VISIBLE)) {
-                WeatherStatusFragment detailFragment = (WeatherStatusFragment) fm.findFragmentById(R.id.fragment_detail);
                 WeatherStatus weatherStatus = listFragment.getSelectedWeatherStatus();
-				Location currentLocation = listFragment.getCurrentLocation();
-                if (detailFragment == null) {
-                    detailFragment = WeatherStatusFragment.newInstance(weatherStatus, currentLocation);
-                    fm.beginTransaction()
-                            .add(R.id.fragment_detail, detailFragment)
-                            .commit();
-                }
+				Location currentLocation    = listFragment.getCurrentLocation();
+
+				// update the detail fragment
+				WeatherStatusFragment detailFragment = WeatherStatusFragment.newInstance(weatherStatus, currentLocation);
+				fm.beginTransaction()
+						.replace(R.id.fragment_detail, detailFragment)
+						.commit();
             }
         }
-		Log.d(TAG, "in onCreate setting twoPane to " + _isTwoPane);
 	}
 
 	@Override
@@ -83,7 +82,6 @@ public class MainActivity extends ActionBarActivity implements WeatherListFragme
 	{
 		if (_isTwoPane) {
 			// we're in 2-pane layout, so update fragment with new information
-			Log.d(TAG, "item selected; isTwoPane, updating detailFragment");
 			FragmentManager fm = getSupportFragmentManager();
 			WeatherStatusFragment detailFragment = (WeatherStatusFragment)fm.findFragmentById(R.id.fragment_detail);
 			if (detailFragment != null) {
@@ -93,15 +91,15 @@ public class MainActivity extends ActionBarActivity implements WeatherListFragme
 				Log.e(TAG, "null detail fragment in onWeatherStatusSelected");
 			}
 		}
-		else { // single-pane, so launch activity with weather status and location bundled up
+		else {
+			// single-pane, so launch activity with weather status and location bundled up
 			try {
 				if (weatherStatus != null) {
-					Log.d(TAG, "item selected; is single pane, launching activity");
 					Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
-					intent.putExtra(WeatherStatusFragment.WEATHER_KEY, weatherStatus.toJSON().toString());
+					intent.putExtra(DetailActivity.WEATHER_KEY, weatherStatus.toJSON().toString());
 					if (currentLocation != null) {
-						intent.putExtra(WeatherStatusFragment.LATITUDE_KEY,currentLocation.getLatitude());
-						intent.putExtra(WeatherStatusFragment.LONGITUDE_KEY,currentLocation.getLongitude());
+						intent.putExtra(DetailActivity.LATITUDE_KEY, currentLocation.getLatitude());
+						intent.putExtra(DetailActivity.LONGITUDE_KEY, currentLocation.getLongitude());
 					}
 					startActivity(intent);
 				}

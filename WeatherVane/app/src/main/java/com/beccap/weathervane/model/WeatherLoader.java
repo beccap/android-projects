@@ -52,46 +52,10 @@ public class WeatherLoader
 							WeatherAPI.WEATHER_URL_GET_LAT + location.getLatitude() +
 							WeatherAPI.WEATHER_URL_GET_LON + location.getLongitude() +
 							WeatherAPI.WEATHER_URL_GET_COUNT + count;
-		Log.d(TAG, "URL: " + weatherURL);
 		new WeatherJSONReader(weatherURL).execute();
 	}
 
-//	// callback from SimpleJSONReader.Listener
-//	public void onReadCompleted(String jsonString) {
-//		ArrayList<WeatherStatus> weatherStatusList = parseJSON(jsonString);
-//		_listener.onWeatherLoaded(weatherStatusList);
-//	}
-
-//	// callback from WeatherStatus.OnChangedListener
-//	public void onWeatherStatusChanged(WeatherStatus weatherStatus) {
-//		_listener.onWeatherStatusChanged(weatherStatus);
-//	}
-
-	// parse the JSON string into a list of WeatherStatuses
-	private ArrayList<WeatherStatus> parseJSON(String jsonString) {
-		// convert JSON to ArrayList<WeatherStatus>
-		ArrayList<WeatherStatus> weatherStatusList = null;
-
-		try {
-			weatherStatusList = new ArrayList<WeatherStatus>();
-			JSONObject tokenerResult = (JSONObject)new JSONTokener(jsonString).nextValue();
-			JSONArray  jsonArray = tokenerResult.getJSONArray(WeatherAPI.WEATHER_ARRAY_TOKEN);
-			for (int i = 0; i < jsonArray.length(); ++i) {
-				// WeatherStatus knows how to parse its JSON object
-				WeatherStatus weatherStatus = new WeatherStatus(jsonArray.getJSONObject(i));
-				String weatherIconString = weatherStatus.getWeatherIconString();
-				WeatherIconTable.loadIconBitmap(weatherIconString);
-				weatherStatusList.add(weatherStatus);
-			}
-			Log.d(TAG, "icon count after loading: " + WeatherIconTable.getIconCount());
-		}
-		catch (JSONException e) {
-			Log.e(TAG, "Error parsing JSON: " + e.getMessage());
-		}
-
-		return weatherStatusList;
-	}
-
+	// Async Task to read the JSON from the API and parse it
 	private class WeatherJSONReader extends AsyncTask<Void, Void, ArrayList<WeatherStatus>>
 	{
 		private String _stringUrl;
@@ -109,8 +73,8 @@ public class WeatherLoader
 				HttpURLConnection conn = (HttpURLConnection) readURL.openConnection();
 
 				// set connection properties
-				conn.setReadTimeout(10000);
-				conn.setConnectTimeout(10000);
+				conn.setReadTimeout(20000);
+				conn.setConnectTimeout(20000);
 				conn.setDoInput(true);
 
 				// connect and read
@@ -139,4 +103,30 @@ public class WeatherLoader
 			// pass result back to listener
 			_listener.onWeatherLoaded(weatherList);
 		}
-	}}
+
+		// parse the JSON string into a list of WeatherStatuses
+		// NOTE: should not be called on the UI thread
+		private ArrayList<WeatherStatus> parseJSON(String jsonString) {
+			// convert JSON to ArrayList<WeatherStatus>
+			ArrayList<WeatherStatus> weatherStatusList = null;
+
+			try {
+				weatherStatusList = new ArrayList<WeatherStatus>();
+				JSONObject tokenerResult = (JSONObject)new JSONTokener(jsonString).nextValue();
+				JSONArray  jsonArray = tokenerResult.getJSONArray(WeatherAPI.WEATHER_ARRAY_TOKEN);
+				for (int i = 0; i < jsonArray.length(); ++i) {
+					// WeatherStatus knows how to parse its JSON object
+					WeatherStatus weatherStatus = new WeatherStatus(jsonArray.getJSONObject(i));
+					String weatherIconString = weatherStatus.getWeatherIconString();
+					WeatherIconTable.loadIconBitmap(weatherIconString);
+					weatherStatusList.add(weatherStatus);
+				}
+			}
+			catch (JSONException e) {
+				Log.e(TAG, "Error parsing JSON: " + e.getMessage());
+			}
+
+			return weatherStatusList;
+		}
+	}
+}

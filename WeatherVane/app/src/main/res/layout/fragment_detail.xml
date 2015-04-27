@@ -11,146 +11,160 @@
         android:layout_height="0dp"
         />
 
-    <RelativeLayout
+    <ScrollView
         android:layout_weight="3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         >
-
-        <TextView
-            android:id="@+id/detail_text_city"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentTop="true"
-            android:textSize="30sp"
-            android:layout_marginTop="15dp"
-            />
-
-        <LinearLayout
-            android:id="@+id/detail_weather_group"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/detail_text_city"
-            android:layout_marginTop="10dp"
-            >
-            <TextView
-                android:id="@+id/detail_text_temperature"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:textSize="40sp"
-                />
-            <ImageView
-                android:id="@+id/detail_weather_icon"
-                android:layout_width="95dp"
-                android:layout_height="95dp"
-                android:paddingLeft="10dp"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/detail_weather_group"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="15dp"
-            >
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
-                <TextView
-                    android:id="@+id/detail_label_wind"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="24sp"
-                    android:text="@string/detail_label_wind"
-                    />
-
-                <TextView
-                    android:id="@+id/detail_text_wind"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/detail_label_wind"
-                    android:textSize="24sp"
-                    android:paddingLeft="8sp"
-                    />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
-                <TextView
-                    android:id="@+id/detail_label_pressure"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="24sp"
-                    android:text="@string/detail_label_pressure"
-                    />
-
-                <TextView
-                    android:id="@+id/detail_text_pressure"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/detail_label_pressure"
-                    android:textSize="24sp"
-                    android:paddingLeft="8sp"
-                    />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
-                <TextView
-                    android:id="@+id/detail_label_humidity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="24sp"
-                    android:text="@string/detail_label_humidity"
-                    />
-
-                <TextView
-                    android:id="@+id/detail_text_humidity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/detail_label_humidity"
-                    android:textSize="24sp"
-                    android:paddingLeft="8sp"
-                    />
-            </RelativeLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="15dp"
             >
 
             <TextView
+                android:id="@+id/detail_text_city"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:text="@string/detail_label_last_updated"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true"
+                android:textSize="30sp"
+                android:textColor="@color/magenta"
+                android:layout_marginTop="15dp"
                 />
 
-            <TextView
-                android:id="@+id/detail_text_last_updated"
+            <LinearLayout
+                android:id="@+id/detail_temperature_group"
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:paddingLeft="5sp"
-                />
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/detail_text_city"
+                android:layout_marginTop="10dp"
+                >
+                <TextView
+                    android:id="@+id/detail_text_temperature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="40sp"
+                    android:textColor="@color/blue"
+                    />
+                <ImageView
+                    android:id="@+id/detail_weather_icon"
+                    android:layout_width="95dp"
+                    android:layout_height="95dp"
+                    android:paddingLeft="10dp"
+                    />
+            </LinearLayout>
 
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/detail_windpressurehumidity_group"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/detail_temperature_group"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="15dp"
+                >
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                    <TextView
+                        android:id="@+id/detail_label_wind"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="24sp"
+                        android:textColor="@color/black"
+                        android:text="@string/detail_label_wind"
+                        />
 
-    </RelativeLayout>
+                    <TextView
+                        android:id="@+id/detail_text_wind"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/detail_label_wind"
+                        android:textSize="24sp"
+                        android:textColor="@color/black"
+                        android:paddingLeft="8sp"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                    <TextView
+                        android:id="@+id/detail_label_pressure"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="24sp"
+                        android:textColor="@color/black"
+                        android:text="@string/detail_label_pressure"
+                        />
+
+                    <TextView
+                        android:id="@+id/detail_text_pressure"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/detail_label_pressure"
+                        android:textSize="24sp"
+                        android:textColor="@color/black"
+                        android:paddingLeft="8sp"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                    <TextView
+                        android:id="@+id/detail_label_humidity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="24sp"
+                        android:textColor="@color/black"
+                        android:text="@string/detail_label_humidity"
+                        />
+
+                    <TextView
+                        android:id="@+id/detail_text_humidity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/detail_label_humidity"
+                        android:textSize="24sp"
+                        android:textColor="@color/black"
+                        android:paddingLeft="8sp"
+                        />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/detail_windpressurehumidity_group"
+                android:layout_margin="15dp"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:text="@string/detail_label_last_updated"
+                    />
+
+                <TextView
+                    android:id="@+id/detail_text_last_updated"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:paddingLeft="5sp"
+                    />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+    </ScrollView>
 </LinearLayout>

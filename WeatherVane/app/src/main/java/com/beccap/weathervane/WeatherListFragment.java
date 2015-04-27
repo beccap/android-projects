@@ -47,6 +47,8 @@ public class WeatherListFragment extends ListFragment
 	private GoogleApiClient _googleApiClient;
 	private Location        _currentLocation = null;
 
+	private int _selectedPosition = -1;
+
 	//============ Life Cycle =====================================================================
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -54,8 +56,8 @@ public class WeatherListFragment extends ListFragment
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true); // ensures we don't have to reload the json upon rotation
 		setHasOptionsMenu(true);
-		
-		Log.d(TAG, "in onCreate, connecting to google api services");
+
+		// setup and connect to google api client for location services
 		_googleApiClient = buildGoogleApiClient();
 		_googleApiClient.connect();
 	}
@@ -77,6 +79,7 @@ public class WeatherListFragment extends ListFragment
 
 	@Override
 	public void onDestroy() {
+		// disconnect from google api client
 		_googleApiClient.disconnect();
 		super.onDestroy();
 	}
@@ -103,7 +106,6 @@ public class WeatherListFragment extends ListFragment
 	}
 
 	//============ Getters ========================================================================
-	// Getter for currently selected item
 	public WeatherStatus getSelectedWeatherStatus() { return _selectedWeatherStatus; }
 	public Location getCurrentLocation() { return _currentLocation; }
 
@@ -113,17 +115,20 @@ public class WeatherListFragment extends ListFragment
 	{
 		WeatherStatus weatherStatus = (WeatherStatus)getListAdapter().getItem(pos);
 		_selectedWeatherStatus = weatherStatus;
-		_onSelectedListener.onWeatherStatusSelected(weatherStatus,_currentLocation);
+		_selectedPosition = pos;
         _adapter.notifyDataSetChanged();
+		_onSelectedListener.onWeatherStatusSelected(weatherStatus,_currentLocation);
     }
 	
-	// WeatherLoader.OnWeatherLoadedListener callback
-	// Weather finished loading (icons may not have completed)
+	//============ WeatherLoader.OnWeatherLoadedListener callback =================================
+	// Weather finished loading
 	public void onWeatherLoaded(ArrayList<WeatherStatus> weatherList)
 	{
-		testWeatherList(weatherList);
+//		testWeatherList(weatherList);  // uncomment line to see raw data in debugger
 		if (weatherList == null) {
 			Log.e(TAG, "null Weather List passed to onWeatherLoaded");
+			// try again
+			refreshLocationAndWeather();
 			return;
 		}
 		_adapter = new WeatherListAdapter(weatherList);
@@ -166,6 +171,13 @@ public class WeatherListFragment extends ListFragment
 			holder.temperatureTextView.setText(curr.getTemperatureString());
 			holder.weatherIconView.setImageBitmap(curr.getWeatherIconBitmap());
 
+			if (_selectedPosition == position) {
+				holder.cityNameTextView.setTextColor(getResources().getColor(R.color.magenta));
+			}
+			else {
+				holder.cityNameTextView.setTextColor(getResources().getColor(R.color.black));
+			}
+
 			return newView;
 		}
 
@@ -186,9 +198,7 @@ public class WeatherListFragment extends ListFragment
 		}
 
 		_currentLocation = getGoogleLocation();
-		Log.d(TAG, "currentLocation: " + _currentLocation.toString());
 		if (_currentLocation != null) {
-			Log.d(TAG, "loading weather");
 			new WeatherLoader(this).startLoading(_currentLocation, 10);
 		}
 	}
@@ -201,7 +211,6 @@ public class WeatherListFragment extends ListFragment
 
 	// ============ Google API Client =============================================================
 	protected synchronized GoogleApiClient buildGoogleApiClient() {
-		Log.d(TAG, "building api client");
 		return new GoogleApiClient.Builder(getActivity())
 				.addConnectionCallbacks(this)
 				.addOnConnectionFailedListener(this)
@@ -212,7 +221,6 @@ public class WeatherListFragment extends ListFragment
 	// ============ Google API Callbacks ==========================================================
 	@Override
 	public void onConnected(Bundle bundle) {
-		Log.d(TAG, "onConnected");
 		refreshLocationAndWeather();
 	}
 
@@ -227,7 +235,7 @@ public class WeatherListFragment extends ListFragment
 		// TODO: Set up more sophisticated error handling
 
 		// for now, just load weather from an arbitrary point
-		_currentLocation = new Location("dummy provider");
+		_currentLocation = new Location("");
 		_currentLocation.setLatitude(45.715915);
 		_currentLocation.setLongitude(-122.868617);
 		new WeatherLoader(this).startLoading(_currentLocation, 10);
