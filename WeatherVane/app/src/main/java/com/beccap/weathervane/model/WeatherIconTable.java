@@ -1,3 +1,16 @@
+/**
+ * Implements a hash table for storing weather icons downloaded from the weather api.
+ *
+ * All methods are static.
+ *
+ * findIconBitmap simply looks for a key (given by the weather api) and returns a bitmap if it was
+ *    found; otherwise returns null.
+ *
+ * loadIconBitmap will look the key up in the hash table and load it from the api if it is not
+ *    already in the hash table. Should not be called on the UI thread.
+ *
+ * getIconCount returns the number of icons currently stored in the hash table.
+ */
 package com.beccap.weathervane.model;
 
 import android.graphics.Bitmap;
@@ -10,9 +23,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
-/**
- * Created by beccap on 4/23/15.
- */
 public class WeatherIconTable {
 
     private static final String TAG = WeatherIconTable.class.toString();

@@ -1,3 +1,9 @@
+/**
+ * Schedules an alarm notification for some time in the future
+ *
+ * All methods implemented as static
+ */
+
 package com.beccap.weathervane;
 
 import android.app.AlarmManager;
@@ -7,9 +13,6 @@ import android.content.Intent;
 import android.os.SystemClock;
 import android.util.Log;
 
-/**
- * Created by beccap on 4/24/15.
- */
 public class AlarmScheduler {
     private static final String TAG = AlarmScheduler.class.toString();
 
@@ -19,6 +22,7 @@ public class AlarmScheduler {
     private static AlarmManager  _alarmManager = null;
     private static PendingIntent _pendingIntent = null;
 
+    // initialize - call at app startup
     public static void initialize(Context context) {
         _context = context;
 
@@ -28,6 +32,7 @@ public class AlarmScheduler {
         _pendingIntent = PendingIntent.getBroadcast(_context, REQUEST_NOTIFY_USER, alarmReceiverIntent, 0);
     }
 
+    // schedule an alarm
     public static void scheduleAlarm(long timeIntervalFromNow) {
         if (_alarmManager == null) {
             Log.w(TAG, "Alarm not scheduled because AlarmScheduler has not been initialized.");
@@ -38,6 +43,7 @@ public class AlarmScheduler {
                 _pendingIntent);
     }
 
+    // cancel alarms
     public static void cancelScheduledAlarms() {
         if (_alarmManager == null) {
             Log.w(TAG, "No alarms canceled because AlarmScheduler has not been initialized.");

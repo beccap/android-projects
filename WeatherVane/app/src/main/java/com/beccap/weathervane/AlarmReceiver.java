@@ -1,3 +1,8 @@
+/**
+ * AlarmReceiver - broadcast receiver that receives the intent sent by the AlarmScheduler
+ * and posts a notification.
+ */
+
 package com.beccap.weathervane;
 
 import android.app.NotificationManager;
@@ -9,11 +14,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
-/**
- * Created by beccap on 4/24/15.
- */
 public class AlarmReceiver extends BroadcastReceiver {
     private static final int NOTIFICATION_ID = 1;
+
     @Override
     public void onReceive(Context context, Intent intent) {
 
