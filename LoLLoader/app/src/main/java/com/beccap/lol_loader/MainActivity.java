@@ -1,9 +1,11 @@
-package peereval.course.myapplication;
+package com.beccap.lol_loader;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import peereval.course.lol_loader.R;
 
 public class MainActivity extends AppCompatActivity {
 
