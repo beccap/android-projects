@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.beccap.lol_loader.util.FlickrUrlBuilder;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -18,7 +20,7 @@ public class MainActivityFragment extends Fragment {
     private static final String TITLE_KEY = "title_key";
 
     private Bitmap imageBitmap = null;
-    private String imageTitle;
+    private String imageTitle = "";
 
     public MainActivityFragment() {
     }
@@ -40,21 +42,21 @@ public class MainActivityFragment extends Fragment {
         ImageView rectImageView = (ImageView)rootView.findViewById(R.id.imageRect);
         TextView titleTextView  = (TextView)rootView.findViewById(R.id.textTitle);
 
-        // initialize subview content
+        // initialize subview content; title only visible if there is an image
         if (imageBitmap != null) {
             rectImageView.setImageBitmap(imageBitmap);
-            titleTextView.setText(imageTitle);
             titleTextView.setVisibility(View.VISIBLE);
         }
         else {
             titleTextView.setVisibility(View.INVISIBLE);
         }
+        titleTextView.setText(imageTitle);
 
         // set onClickListener
         rectImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+                new FlickrUrlBuilder().build();
             }
         });
 
