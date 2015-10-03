@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import peereval.course.lol_loader.R;
+import com.beccap.lol_loader.R;
 
 public class MainActivity extends AppCompatActivity {
 
