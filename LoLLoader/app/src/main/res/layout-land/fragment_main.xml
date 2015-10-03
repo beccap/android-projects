@@ -12,16 +12,18 @@
         android:id="@+id/imageRect"
         android:layout_width="@dimen/image_width"
         android:layout_height="@dimen/image_height"
-        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/layout_horizontal_padding"
         android:background="@color/rect_color"/>
 
     <TextView
         android:id="@+id/textTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/imageRect"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/layout_vertical_padding"
+        android:layout_toEndOf="@id/imageRect"
+        android:layout_toRightOf="@id/imageRect"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/layout_horizontal_padding"
         android:text="@string/default_title_text"
         android:textColor="@color/title_text_color"
         android:textSize="@dimen/title_text_size"
