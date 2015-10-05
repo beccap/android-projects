@@ -2,6 +2,8 @@ package com.beccap.lol_loader.response;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 /**
  * Created by beccap on 10/3/15.
  */
@@ -9,8 +11,8 @@ public class FlickrPage {
     @SerializedName("perpage")
     private String perPage; // pictures per page
     private String total; // total number of pictures
-    @SerializedName("photos")
-    private FlickrPhoto[] photos;
+    @SerializedName("photo")
+    private List<FlickrPhoto> photos;
 
     public String getPerPage() {
         return perPage;
@@ -28,11 +30,11 @@ public class FlickrPage {
         this.total = total;
     }
 
-    public FlickrPhoto[] getPhotos() {
+    public List<FlickrPhoto> getPhotos() {
         return photos;
     }
 
-    public void setPhotos(FlickrPhoto[] photos) {
+    public void setPhotos(List<FlickrPhoto> photos) {
         this.photos = photos;
     }
 

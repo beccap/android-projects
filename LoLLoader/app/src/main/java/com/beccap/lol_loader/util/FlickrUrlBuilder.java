@@ -19,22 +19,22 @@ public class FlickrUrlBuilder {
     private static final String REST_PATH = "rest";
     private static final String SEARCH_METHOD = "flickr.photos.search";
     private static final String API_KEY = "6696fb3954076c0881e76a3f1b87b06e";
-    private static final String SEARCH_TAG = "lolcat";
+    private static final String SEARCH_TEXT = "lolcat";
     private static final String SORT_TYPE = "interesting-desc";
     private static final String MEDIA_TYPE = "photos";
     private static final String PAGE_NUMBER = "1";
     private static final String RESPONSE_FORMAT = "json";
 
     private int maxPhotos = 100;
-    private String searchTag = SEARCH_TAG;
+    private String searchText = SEARCH_TEXT;
 
     public FlickrUrlBuilder withMaxPhotos(int maxPhotos) {
         this.maxPhotos = maxPhotos;
         return this;
     }
 
-    public FlickrUrlBuilder withSearchTag(String searchTag) {
-        this.searchTag = searchTag;
+    public FlickrUrlBuilder withSearchText(String searchText) {
+        this.searchText = searchText;
         return this;
     }
 
@@ -47,7 +47,7 @@ public class FlickrUrlBuilder {
                   .appendPath(REST_PATH)
                   .appendQueryParameter("method", SEARCH_METHOD)
                   .appendQueryParameter("api_key", API_KEY)
-                  .appendQueryParameter("tags", SEARCH_TAG)
+                  .appendQueryParameter("text", searchText)
                   .appendQueryParameter("sort", SORT_TYPE)
                   .appendQueryParameter("media", MEDIA_TYPE)
                   .appendQueryParameter("per_page", Integer.toString(maxPhotos))

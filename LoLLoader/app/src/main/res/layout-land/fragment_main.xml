@@ -24,9 +24,13 @@
         android:layout_toRightOf="@id/imageRect"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/layout_horizontal_padding"
+        android:layout_marginEnd="@dimen/layout_horizontal_padding"
+        android:layout_marginRight="@dimen/layout_horizontal_padding"
         android:text="@string/default_title_text"
         android:textColor="@color/title_text_color"
         android:textSize="@dimen/title_text_size"
-        android:textStyle="italic"/>
+        android:textStyle="italic"
+        android:singleLine="true"
+        android:ellipsize="end"/>
 
 </RelativeLayout>

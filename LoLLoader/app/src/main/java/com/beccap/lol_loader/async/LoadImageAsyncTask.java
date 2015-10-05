@@ -19,7 +19,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
-import java.util.Random;
+import com.beccap.lol_loader.util.Random;
+import java.util.logging.Logger;
 
 /**
  * Created by beccap on 10/3/15.
@@ -27,14 +28,31 @@ import java.util.Random;
 public class LoadImageAsyncTask extends AsyncTask<Void, Integer, LoLImage> {
     private static final String TAG = LoadImageAsyncTask.class.getSimpleName();
 
+    private ImageLoadedListener callback;
+
+    public LoadImageAsyncTask(ImageLoadedListener callback) {
+        this.callback = callback;
+    }
+
+    public interface ImageLoadedListener {
+        void onImageLoaded(LoLImage loLImage);
+    }
+
     @Override
     protected LoLImage doInBackground(Void... params) {
         // query the Flickr API
         String jsonResponse = doFlickrSearchQuery();
+        Log.d(TAG, "jsonResponse: " + jsonResponse);
         // parse the JSON to get the page of photos
         FlickrPage page = parseFlickrResponse(jsonResponse);
+        Log.d(TAG, "page: " + page);
+        Log.d(TAG, "perpage: " + page.getPerPage());
+        Log.d(TAG, "total: " + page.getTotal());
+        Log.d(TAG, "photo count: " + page.getPhotoCount());
+        Log.d(TAG, "photos array: " + page.getPhotos());
         // select a random photo from what was returned;
         FlickrPhoto photo = randomPhotoFromPage(page);
+        Log.d(TAG, "photo: " + photo);
         // build a LoLImage from photo data
         return readImageData(photo);
     }
@@ -46,6 +64,9 @@ public class LoadImageAsyncTask extends AsyncTask<Void, Integer, LoLImage> {
 
     @Override
     protected void onPostExecute(LoLImage loLImage) {
+        if (callback != null) {
+            callback.onImageLoaded(loLImage);
+        }
         super.onPostExecute(loLImage);
     }
 
@@ -97,13 +118,19 @@ public class LoadImageAsyncTask extends AsyncTask<Void, Integer, LoLImage> {
         if (page == null) {
             return null;
         }
-        Random random = new Random();
 
-        FlickrPhoto[] photos = page.getPhotos();
+        List<FlickrPhoto> photos = page.getPhotos();
         int photoCount = page.getPhotoCount();
 
-        int index = random.nextInt(photoCount);
-        return photos[index];
+        if (photos != null) {
+            int index = Random.getInt(photos.size());
+            Log.d(TAG, "size: " + photos.size());
+            return photos.get(index);
+        }
+        else {
+            Log.e(TAG, "Photos array is NULL");
+            return null;
+        }
     }
 
     private LoLImage readImageData(FlickrPhoto photo) {
@@ -128,7 +155,7 @@ public class LoadImageAsyncTask extends AsyncTask<Void, Integer, LoLImage> {
 
                 // return new image data object
                 Log.d(TAG, "success!");
-                return new LoLImage(imageBitmap, photo.getTitle());
+                return new LoLImage(imageBitmap, photo.getStrippedTitle());
             }
             catch (Exception e) {
                 Log.e(TAG, "Error reading Bitmap: " + e.getMessage());

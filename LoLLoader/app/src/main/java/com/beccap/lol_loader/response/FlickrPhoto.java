@@ -58,4 +58,14 @@ public class FlickrPhoto {
         return "https://farm" + farm + ".staticflickr.com/" + server + "/" + id + "_"
                 + secret + "_" + SIZE + ".jpg";
     }
+
+    public String getStrippedTitle() {
+        if (title != null) {
+            // remove quotes
+            return title.replace("\"","");
+        }
+        else {
+            return "";
+        }
+    }
 }
