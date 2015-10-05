@@ -4,7 +4,8 @@ import android.net.Uri;
 import android.util.Log;
 
 /**
- * Created by beccap on 10/3/15.
+ * Utility class to build a Flickr Search Request URL; Builder pattern allows some of the optional
+ * fields to be set more flexibly.
  */
 public class FlickrUrlBuilder {
 
@@ -25,9 +26,11 @@ public class FlickrUrlBuilder {
     private static final String PAGE_NUMBER = "1";
     private static final String RESPONSE_FORMAT = "json";
 
+    // optional parameters
     private int maxPhotos = 100;
     private String searchText = SEARCH_TEXT;
 
+    // optional parameter setting
     public FlickrUrlBuilder withMaxPhotos(int maxPhotos) {
         this.maxPhotos = maxPhotos;
         return this;
@@ -38,9 +41,18 @@ public class FlickrUrlBuilder {
         return this;
     }
 
+    /**
+     * build()
+     *
+     * Uses all the data to build a URL which can be used to query Flickr based on our search
+     * criteria
+     *
+     * @return URL as string
+     */
     public String build() {
         Uri.Builder uriBuilder = new Uri.Builder();
 
+        // take advanatage of Uri.Builder utility
         uriBuilder.scheme(SCHEME)
                   .authority(AUTHORITY)
                   .appendPath(SERVICES_PATH)
@@ -55,8 +67,6 @@ public class FlickrUrlBuilder {
                   .appendQueryParameter("format", RESPONSE_FORMAT)
                   .appendQueryParameter("nojsoncallback", "1");
 
-        String url = uriBuilder.build().toString();
-        Log.d(TAG, "built url: " + url);
-        return url;
+        return uriBuilder.build().toString();
     }
 }

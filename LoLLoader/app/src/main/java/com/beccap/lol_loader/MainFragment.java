@@ -1,7 +1,6 @@
 package com.beccap.lol_loader;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,10 +11,12 @@ import android.widget.TextView;
 
 import com.beccap.lol_loader.async.LoadImageAsyncTask;
 import com.beccap.lol_loader.model.LoLImage;
-import com.beccap.lol_loader.util.FlickrUrlBuilder;
 
 /**
- * A placeholder fragment containing a simple view.
+ * MainFragment handles most of the UI for displaying images and responding to user clicks.
+ *
+ * Is a listener for LoadImageAsyncTask, and will be notified whenever a new image is ready to
+ * be displayed.
  */
 public class MainFragment extends Fragment implements LoadImageAsyncTask.ImageLoadedListener {
 
@@ -23,30 +24,28 @@ public class MainFragment extends Fragment implements LoadImageAsyncTask.ImageLo
     private static final String TITLE_KEY = "title_key";
 
     private Bitmap imageBitmap = null;
-    private String imageTitle = "";
+    private String imageTitle;
 
     private ImageView rectImageView;
     private TextView  titleTextView;
     private TextView  loadStatusTextView;
 
-    private String defaultTitle;
-
-    public MainFragment() {
-    }
+    private String promptText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        defaultTitle = getString(R.string.default_title_text);
+        // retrieve prompt text
+        promptText = getString(R.string.prompt_text);
 
         // retrieve view data from savedInstanceState (rotation, etc)
         if (savedInstanceState != null) {
-            imageBitmap = (Bitmap)savedInstanceState.getParcelable(IMAGE_KEY);
+            imageBitmap = savedInstanceState.getParcelable(IMAGE_KEY);
             imageTitle  = savedInstanceState.getString(TITLE_KEY);
         }
         else {
-            imageTitle = defaultTitle;
+            imageTitle = promptText;
         }
 
         // inflate layout
@@ -74,6 +73,7 @@ public class MainFragment extends Fragment implements LoadImageAsyncTask.ImageLo
         return rootView;
     }
 
+    // save data here
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -85,25 +85,41 @@ public class MainFragment extends Fragment implements LoadImageAsyncTask.ImageLo
         outState.putString(TITLE_KEY, imageTitle);
     }
 
+    /**
+     * onImageLoaded()
+     *
+     * Callback method for LoadImageAsyncTask.ImageLoadedListener
+     * Updates views and data based on results of image loader.
+     *
+     * @param lolImage - object containing image and title
+     */
     @Override
     public void onImageLoaded(LoLImage lolImage) {
         loadStatusTextView.setVisibility(View.GONE);
 
+        // update image and title instance variables
         if (lolImage == null) {
             imageBitmap = null;
-            imageTitle  = defaultTitle;
+            imageTitle  = promptText;
         }
         else {
             imageBitmap = lolImage.getBitmap();
             imageTitle  = lolImage.getTitle();
         }
+
+        // update views based on new data
         updateSubviews();
     }
 
+    /**
+     * updateSubviews()
+     *
+     * Make sure what is contained in subviews accurately reflects current data.
+     */
     private void updateSubviews() {
         int backgroundResId;
 
-        // make sure content is set to reflect the current data
+        // make sure subview content is set to reflect the current data
         rectImageView.setImageBitmap(imageBitmap);
         titleTextView.setText(imageTitle);
 

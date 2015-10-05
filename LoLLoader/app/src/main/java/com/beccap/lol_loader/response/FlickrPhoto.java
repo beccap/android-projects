@@ -1,7 +1,7 @@
 package com.beccap.lol_loader.response;
 
 /**
- * Created by beccap on 10/3/15.
+ * Response POJO for a single photo; for JSON-to-POJO parsing using gson.
  */
 public class FlickrPhoto {
     // https://farm{farm}.staticflickr.com/{server}/{id}_{secret}_[mstzb].jpg
@@ -13,52 +13,26 @@ public class FlickrPhoto {
     private String secret;
     private String title;
 
-    public String getFarm() {
-        return farm;
-    }
-
-    public void setFarm(String farm) {
-        this.farm = farm;
-    }
-
-    public String getServer() {
-        return server;
-    }
-
-    public void setServer(String server) {
-        this.server = server;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public void setSecret(String secret) {
-        this.secret = secret;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String toURL() {
+    /**
+     * toUrl()
+     *
+     * Creates a URL to access the Flickr image, based on the photo data
+     *
+     * @return URL as String
+     */
+    public String toUrl() {
         // https://farm{farm}.staticflickr.com/{server}/{id}_{secret}_[mstzb].jpg
         return "https://farm" + farm + ".staticflickr.com/" + server + "/" + id + "_"
                 + secret + "_" + SIZE + ".jpg";
     }
 
+    /**
+     * getStrippedTitle()
+     *
+     * Strips extra quotes out of title String; makes sure it is non-null.
+     *
+     * @return modified title
+     */
     public String getStrippedTitle() {
         if (title != null) {
             // remove quotes
