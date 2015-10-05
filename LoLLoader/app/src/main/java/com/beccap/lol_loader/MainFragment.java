@@ -27,6 +27,7 @@ public class MainFragment extends Fragment implements LoadImageAsyncTask.ImageLo
 
     private ImageView rectImageView;
     private TextView  titleTextView;
+    private TextView  loadStatusTextView;
 
     private String defaultTitle;
 
@@ -54,7 +55,9 @@ public class MainFragment extends Fragment implements LoadImageAsyncTask.ImageLo
 
         // get handles to subviews
         rectImageView = (ImageView)rootView.findViewById(R.id.imageRect);
-        titleTextView  = (TextView)rootView.findViewById(R.id.textTitle);
+        titleTextView = (TextView)rootView.findViewById(R.id.textTitle);
+        loadStatusTextView = (TextView)rootView.findViewById(R.id.textLoadStatus);
+        loadStatusTextView.setVisibility(View.GONE);
 
         // initialize subview content; title only visible if there is an image
         updateSubviews();
@@ -63,6 +66,7 @@ public class MainFragment extends Fragment implements LoadImageAsyncTask.ImageLo
         rectImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                loadStatusTextView.setVisibility(View.VISIBLE);
                 new LoadImageAsyncTask(MainFragment.this).execute();
             }
         });
@@ -77,12 +81,13 @@ public class MainFragment extends Fragment implements LoadImageAsyncTask.ImageLo
         // save view data for quick reload on rotation
         if (imageBitmap != null) {
             outState.putParcelable(IMAGE_KEY, imageBitmap);
-            outState.putString(TITLE_KEY, imageTitle);
         }
+        outState.putString(TITLE_KEY, imageTitle);
     }
 
     @Override
     public void onImageLoaded(LoLImage lolImage) {
+        loadStatusTextView.setVisibility(View.GONE);
 
         if (lolImage == null) {
             imageBitmap = null;

@@ -37,14 +37,4 @@ public class FlickrPage {
     public void setPhotos(List<FlickrPhoto> photos) {
         this.photos = photos;
     }
-
-    public int getPhotoCount() {
-        if (perPage == null) {
-            return 0;
-        }
-        int perPageCount = Integer.parseInt(perPage);
-        int totalCount   = Integer.parseInt(total);
-
-        return(Math.min(perPageCount,totalCount));
-    }
 }

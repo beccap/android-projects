@@ -45,14 +45,8 @@ public class LoadImageAsyncTask extends AsyncTask<Void, Integer, LoLImage> {
         Log.d(TAG, "jsonResponse: " + jsonResponse);
         // parse the JSON to get the page of photos
         FlickrPage page = parseFlickrResponse(jsonResponse);
-        Log.d(TAG, "page: " + page);
-        Log.d(TAG, "perpage: " + page.getPerPage());
-        Log.d(TAG, "total: " + page.getTotal());
-        Log.d(TAG, "photo count: " + page.getPhotoCount());
-        Log.d(TAG, "photos array: " + page.getPhotos());
         // select a random photo from what was returned;
         FlickrPhoto photo = randomPhotoFromPage(page);
-        Log.d(TAG, "photo: " + photo);
         // build a LoLImage from photo data
         return readImageData(photo);
     }
@@ -120,7 +114,6 @@ public class LoadImageAsyncTask extends AsyncTask<Void, Integer, LoLImage> {
         }
 
         List<FlickrPhoto> photos = page.getPhotos();
-        int photoCount = page.getPhotoCount();
 
         if (photos != null) {
             int index = Random.getInt(photos.size());
